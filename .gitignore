@@ -1,0 +1,5 @@
+#Exclude private
+/nbproject/private/
+
+#Exclude dist
+/dist/
