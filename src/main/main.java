@@ -5,6 +5,7 @@
  */
 package main;
 
+import Algoritmos.P2.Generacional;
 import Utils.Restricciones;
 import Utils.listaTransmisores;
 import Utils.rangoFrec;
@@ -61,13 +62,13 @@ public class main {
                 NUMERO.setSeed(semilla);
             }
 
-            try {
-                System.out.print("Elige opción:\n1.- Greedy"
-                        + "\n2.- Búsqueda Local\n"
-                        + "3.- Búsqueda Tabú\n"
-                        + "4.- GRASP\n"
-                        + "5.- Cambiar directorio\n"
-                        + "6.- Cambiar semilla\n "
+//            try {
+                System.out.print("Elige opción:\n1.- Generacional"
+                        + "\n2.- Estacionario\n"
+                        + "3.- ----\n"
+                        + "4.- ----\n"
+                        + "5.- ----\n"
+                        + "6.- ----\n "
                         + "0.- Salir"
                         + "\n: ");
 
@@ -75,13 +76,14 @@ public class main {
 
                 switch( select ) {
                     case 1:
-//                        startTime = System.nanoTime();
-//                        Greedy greedy = new Greedy(transmisores, frecuencias, rest);
-//                        endTime = System.nanoTime();
-//                        greedy.resultados();
-//                        
-//                        duration = (endTime - startTime) / 1000000000;
-//                        System.out.println("Tiempo de ejecucion: " + duration + " segundos");
+                        startTime = System.nanoTime();
+                        Generacional generacional = new Generacional(transmisores, frecuencias, rest);
+                        endTime = System.nanoTime();
+                        
+                        generacional.resultadosHijos();
+                        
+                        duration = (endTime - startTime) / 1000000000;
+                        System.out.println("Tiempo de ejecucion: " + duration + " segundos");
                         break;
                     case 2:
 //                        startTime = System.nanoTime();
@@ -140,9 +142,9 @@ public class main {
 
                 System.out.println("\n"); //Mostrar un salto de línea en Java
 
-            } catch( Exception e ) {
-                System.out.println("Uoop! Error! " + e.toString());
-            }
+//            } catch( Exception e ) {
+//                System.out.println("Uoop! Error! " + e.toString());
+//            }
             contador = Math.floorMod(contador + 1, 5);
         }
     }
