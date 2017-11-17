@@ -32,6 +32,8 @@ public class Generacional {
     List<List<Integer>> padres = new ArrayList<>();
     List<List<Integer>> hijos = new ArrayList<>();
 
+    int numEvaluaciones = 0;
+
     public Generacional(listaTransmisores _transmisores, rangoFrec _frecuencias, Restricciones _rest) throws FileNotFoundException {
         frecuencias = _frecuencias.rangoFrecuencias;
         transmisores = _transmisores.transmisores;
@@ -46,12 +48,16 @@ public class Generacional {
             greedyInicial(i);
         }
 
+        //Loop hasta 20000 evaluaciones
         generarHijos();
         System.out.println("Hijos generados");
         cruzarIndividuos();
         System.out.println("Hijos cruzados");
         mutarIndividuos();
         System.out.println("Hijos mutados");
+
+        nuevaGeneracion();
+        System.out.println("Nueva generación");
 
     }
 
@@ -175,6 +181,10 @@ public class Generacional {
 
     }
 
+    void algBX(int individuo1, int individuo2) {
+
+    }
+
     void algCruce2Puntos(int individuo1, int individuo2) {
         Random numero = NUMERO;
         int seleccionado = numero.nextInt(transmisores.size());
@@ -216,6 +226,57 @@ public class Generacional {
 
     }
 
+    public void nuevaGeneracion() throws FileNotFoundException {
+        //Elitismo
+
+        //Buscamos el mejor individuo de la generación de padres
+        int minimo = Integer.MAX_VALUE;
+        int actual = 0;
+        for (int i = 0; i < 50; i++) {
+            if (resultado[i] < minimo) {
+                minimo = resultado[i];
+                actual = i;
+            }
+        }
+
+        List<Integer> mejorIndividuo = padres.get(actual);
+
+        //Evaluamos los hijos
+        resultadoHijos = evaluar(hijos);
+        //Buscamos el hijo con el mayor coste
+        int maximo = Integer.MIN_VALUE;
+        int actual2 = 0;
+        for (int i = 0; i < 50; i++) {
+            if (resultadoHijos[i] > maximo) {
+                maximo = resultadoHijos[i];
+                actual2 = i;
+            }
+        }
+
+        //Si el menor de los padres tiene menor coste que el mayor de los hijos se reemplaza
+        if (minimo < maximo) {
+            hijos.set(actual2, mejorIndividuo);
+            resultadoHijos[actual] = minimo;
+
+        }
+
+        //Los hijos serán los padres para la siguiente generación
+        padres = hijos;
+        resultado = resultadoHijos;
+
+    }
+
+    public int[] evaluar(List<List<Integer>> individuos) throws FileNotFoundException {
+        int[] nRes = new int[50];
+        for (int i = 0; i < individuos.size(); i++) {
+            int valor = rDiferencia(individuos.get(i), restricciones);
+            nRes[i] = valor;
+        }
+
+        //numEvaluaciones+=50;  
+        return nRes;
+    }
+
     public void resultados() {
         for (int i = 0; i < 50; i++) {
             System.out.println("------------------" + (i + 1) + "------------------");
@@ -234,5 +295,23 @@ public class Generacional {
             }
             //System.out.println(resultado[i]);
         }
+    }
+
+    public void resMejorIndividuo() {
+        int minimo = Integer.MAX_VALUE;
+        int actual = 0;
+        for (int i = 0; i < 50; i++) {
+            if (resultado[i] < minimo) {
+                minimo = resultado[i];
+                actual = i;
+            }
+        }
+        List<Integer> mejorIndividuo = padres.get(actual);
+
+        for (int i = 0; i < transmisores.size()-1; i++) {
+            System.out.println("Transmisor " + (i + 1) + ": " + padres.get(actual).get(i));
+        }
+
+        System.out.println(resultado[actual]);
     }
 }
