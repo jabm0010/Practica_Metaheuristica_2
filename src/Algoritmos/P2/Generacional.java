@@ -22,6 +22,7 @@ import static main.main.NUMERO;
 public class Generacional {
 
     static int numParejas = 18;
+    static int convergenciaSol=40; // 80% de 50
 
     List<List<Integer>> frecuencias = new ArrayList<>();
     List<Integer> transmisores = new ArrayList<>();
@@ -33,6 +34,8 @@ public class Generacional {
     List<List<Integer>> hijos = new ArrayList<>();
 
     int numEvaluaciones = 0;
+    
+    boolean reinicializar=false;
 
     public Generacional(listaTransmisores _transmisores, rangoFrec _frecuencias, Restricciones _rest) throws FileNotFoundException {
         frecuencias = _frecuencias.rangoFrecuencias;
@@ -48,13 +51,18 @@ public class Generacional {
             greedyInicial(i);
         }
         
-        boolean genCompletada=false;
-        
+
+        int numGeneraciones=0;
+        int ultimoResultado=0;
+        List<Integer> ultimoResultadoL=new ArrayList<>();
+        int resultadoActual=Integer.MAX_VALUE;
+        List<Integer> resultadoActualL=new ArrayList<>();
         
         
         do{
        
             System.out.println(numEvaluaciones);
+            System.out.println(numGeneraciones);
            
             //Loop hasta 20000 evaluaciones
             generarHijos();
@@ -67,7 +75,54 @@ public class Generacional {
             nuevaGeneracion(evalu);
             System.out.println("Nueva generación");
             
+            //Buscamos el mínimo 
+            for(int i=0;i<50;i++){
+                if(resultado[i]<resultadoActual){
+                    resultadoActual=resultado[i];
+                    resultadoActualL=padres.get(i);
+                }
+            }
+            //Reinicialización: 80% de la población es igual
+            //comprobarConvergencia1() solo comprueba en función de resultado[]. En caso de que
+            //haya 80% de valores iguales entonces procedemos a comprobarConvergencia2() que ya
+            //si que comprueba con las listas y los valores de transmisores asignados
+            
+            if(comprobarConvergencia1()){
+                if(comprobarConvergencia2()){
+                    System.out.println("Reinicialización por convergencia");
+                   reinicializar(resultadoActualL,resultadoActual);
+                }
+            }
+            
+            
+            //Reinicialización: 20 generaciones con mismo mejor resultado
+            if(resultadoActual==ultimoResultado){
+                if(ultimoResultadoL.equals(resultadoActualL));
+                numGeneraciones++;
+            }else{
+                numGeneraciones=0;
+            }
+            
+            if(numGeneraciones==20){
+                System.out.println("Reinicialización");
+                reinicializar(resultadoActualL,resultadoActual);
+                numGeneraciones=0;
+            }
+            
+            ultimoResultado=resultadoActual;
+            ultimoResultadoL=resultadoActualL;
+            
+            System.out.println(ultimoResultado);
+            
         } while(numEvaluaciones<20000);
+        
+        
+        for (int i = 0; i < transmisores.size() - 1; i++) {
+            System.out.println("Transmisor " + (i + 1) + ": " + ultimoResultadoL.get(i));
+        }
+        
+        System.out.println(ultimoResultado);
+        
     }
 
     void greedyInicial(int id) throws FileNotFoundException {
@@ -361,6 +416,56 @@ public class Generacional {
         //numEvaluaciones+=50;  
         return nRes;
     }
+    
+    public boolean comprobarConvergencia1(){
+        
+        for(int i=0;i<50;i++){
+            
+            int contador=0;
+            
+            for(int j=0;j<50;j++){
+               if(resultado[i]==resultado[j]){
+                   contador++;
+               }
+               if(contador==convergenciaSol){
+                   return true;
+               }
+            }
+        }
+        return false;
+    }
+    
+    public boolean comprobarConvergencia2(){
+        for(int i=0;i<50;i++){
+            
+            int contador=0;
+            
+            for(int j=0;j<50;j++){
+               if(padres.get(i)==padres.get(j)){
+                   contador++;
+               }
+               if(contador==convergenciaSol){
+                   return true;
+               }
+            }
+        }
+        return false;
+    }
+    
+    public void reinicializar(List<Integer> mejorResultadoL, int mejorResultado)throws FileNotFoundException{
+        padres.clear();
+        for (int i = 0; i < 50; i++) {
+            padres.add(new ArrayList<>());
+        }
+        
+        padres.add(0, mejorResultadoL);
+        resultado[0]=mejorResultado;
+        
+        for(int i=1;i<50;i++){
+            greedyInicial(i);
+        }
+    }
+    
 
     public void resultados() {
         for (int i = 0; i < 50; i++) {
