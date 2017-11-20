@@ -47,18 +47,27 @@ public class Generacional {
             //System.out.println(i);
             greedyInicial(i);
         }
+        
+        boolean genCompletada=false;
+        
+        
+        
+        do{
+       
+            System.out.println(numEvaluaciones);
+           
+            //Loop hasta 20000 evaluaciones
+            generarHijos();
+            System.out.println("Hijos generados");
+            cruzarIndividuos();
+            System.out.println("Hijos cruzados");
+            int evalu=mutarIndividuos();
+            System.out.println("Hijos mutados");
 
-        //Loop hasta 20000 evaluaciones
-        generarHijos();
-        System.out.println("Hijos generados");
-        cruzarIndividuos();
-        System.out.println("Hijos cruzados");
-        mutarIndividuos();
-        System.out.println("Hijos mutados");
-
-        nuevaGeneracion();
-        System.out.println("Nueva generación");
-
+            nuevaGeneracion(evalu);
+            System.out.println("Nueva generación");
+            
+        } while(numEvaluaciones<20000);
     }
 
     void greedyInicial(int id) throws FileNotFoundException {
@@ -128,20 +137,25 @@ public class Generacional {
         frecuenciasR.clear(); // Borra todos los elementos anteriores para nueva solucion
     }
 
+    //Funciona bien
     void generarHijos() {
         int cont = 0;
         while (cont < 50) {
             Random numero = NUMERO;
             int seleccionado = numero.nextInt(50);
+            // System.out.println(seleccionado+":"+resultado[seleccionado]);
 
             Random numero2 = NUMERO;
             int seleccionado2 = numero.nextInt(50);
+            //  System.out.println(seleccionado2+":"+resultado[seleccionado2]);
 
             if (resultado[seleccionado] < resultado[seleccionado2]) {
                 hijos.add(cont, padres.get(seleccionado));
+                //     System.out.println(seleccionado);
 
             } else {
                 hijos.add(cont, padres.get(seleccionado2));
+                //    System.out.println(seleccionado2);
             }
             cont++;
 
@@ -156,48 +170,75 @@ public class Generacional {
 
             algCruce2Puntos(individuo1, individuo2);
             cont += 2;
+            //System.out.println(cont);
         }
+        
+        
 
     }
 
-    // No estoy seguro de si habría que hacerla así.
-    void mutarIndividuos() {
+    //Funciona bien
+    /*
+    Ahora devuelve un entero, para controlar el numero de evaluaciones total
+    */
+    
+    int mutarIndividuos() {
         //Mutamos solo un individuo
 
         //Seleccionamos el individuo a mutar
         Random numero = NUMERO;
         int seleccionado = numero.nextInt(50);
 
-        //mutamos k genes, k= 0,1
-        //esperanza matematica= 0,1*numTransmisores
-        double numMutar = 0.1 * transmisores.size();
+        int transmisorMut = numero.nextInt(transmisores.size());
+        int frecAsociada = transmisores.get(transmisorMut);
 
-        //Para 200 transmisores mutaría los 20 primeros 
-        for (int i = 0; i < numMutar; i++) {
-            int frecAsociada = transmisores.get(i);
-            int nuevaFrecuencia = numero.nextInt(frecuencias.get(frecAsociada).size());
-            hijos.get(seleccionado).set(i, frecuencias.get(frecAsociada).get(nuevaFrecuencia));
-        }
+        int frecuenciaMut = numero.nextInt(frecuencias.get(frecAsociada).size());
+        hijos.get(seleccionado).set(transmisorMut, frecuencias.get(frecAsociada).get(frecuenciaMut));
+        
+        return seleccionado;
 
+        // System.out.println(seleccionado+"-"+transmisorMut+"- "+frecuenciaMut);
+//        //mutamos k genes, k= 0,1
+//        //esperanza matematica= 0,1*numTransmisores
+//        double numMutar = 0.1 * transmisores.size();
+//
+//        //Para 200 transmisores mutaría los 20 primeros 
+//        for (int i = 0; i < numMutar; i++) {
+//            int frecAsociada = transmisores.get(i);
+//            int nuevaFrecuencia = numero.nextInt(frecuencias.get(frecAsociada).size());
+//            hijos.get(seleccionado).set(i, frecuencias.get(frecAsociada).get(nuevaFrecuencia));
+//        }
     }
 
     void algBX(int individuo1, int individuo2) {
 
     }
 
+    //Funciona bien
     void algCruce2Puntos(int individuo1, int individuo2) {
         Random numero = NUMERO;
         int seleccionado = numero.nextInt(transmisores.size());
+        //System.out.println(seleccionado);
 
         Random numero2 = NUMERO;
         int seleccionado2 = numero.nextInt(transmisores.size());
-
+        //System.out.println(seleccionado2);
         if (seleccionado2 < seleccionado) {
             int temp = seleccionado;
             seleccionado = seleccionado2;
             seleccionado2 = temp;
 
         }
+//        System.out.println("Individuo 1");
+//        for (int i = 0; i < hijos.get(individuo1).size(); i++) {
+//            System.out.println(hijos.get(individuo1).get(i));
+//
+//        }
+//        System.out.println("Individuo 2");
+//        for (int i = 0; i < hijos.get(individuo2).size(); i++) {
+//            System.out.println(hijos.get(individuo2).get(i));
+//
+//        }
 
         List<Integer> solucion1 = new ArrayList<>();
         List<Integer> solucion2 = new ArrayList<>();
@@ -212,6 +253,13 @@ public class Generacional {
         for (int i = seleccionado2; i < transmisores.size(); i++) {
             solucion1.add(i, hijos.get(individuo1).get(i));
         }
+//        System.out.println("Solucion 1");
+//        for (int i = 0; i < solucion1.size(); i++) {
+//            System.out.println(solucion1.get(i));
+//
+//        }
+
+        hijos.set(individuo1, solucion1);
 
         //Segundo cruce
         for (int i = 0; i < seleccionado; i++) {
@@ -224,9 +272,10 @@ public class Generacional {
             solucion2.add(i, hijos.get(individuo2).get(i));
         }
 
+        hijos.set(individuo2, solucion2);
     }
 
-    public void nuevaGeneracion() throws FileNotFoundException {
+    public void nuevaGeneracion(int evalu) throws FileNotFoundException {
         //Elitismo
 
         //Buscamos el mejor individuo de la generación de padres
@@ -238,11 +287,35 @@ public class Generacional {
                 actual = i;
             }
         }
+//
+//        for (int i = 0; i < 50; i++) {
+//            System.out.println(resultado[i]);
+//        }
+
+       // System.out.println("Individuo padre:" + minimo + " : " + actual);
 
         List<Integer> mejorIndividuo = padres.get(actual);
 
         //Evaluamos los hijos
-        resultadoHijos = evaluar(hijos);
+       
+        if(evalu<=36){
+        resultadoHijos = evaluar(hijos,36);
+        numEvaluaciones+=36;
+        }else{
+           
+            resultadoHijos=evaluar(hijos,evalu);
+            numEvaluaciones+=37;
+        }
+        
+        for(int i=36;i<50;i++){
+            if(i!=evalu){
+                resultadoHijos[i]=resultado[i];
+            }
+        }
+//        for (int i = 0; i < 50; i++) {
+//            System.out.println(resultadoHijos[i]);
+//        }
+
         //Buscamos el hijo con el mayor coste
         int maximo = Integer.MIN_VALUE;
         int actual2 = 0;
@@ -253,24 +326,36 @@ public class Generacional {
             }
         }
 
+        //System.out.println("Individuo hijo:" + maximo + " : " + actual2);
+
         //Si el menor de los padres tiene menor coste que el mayor de los hijos se reemplaza
         if (minimo < maximo) {
             hijos.set(actual2, mejorIndividuo);
-            resultadoHijos[actual] = minimo;
+            resultadoHijos[actual2] = minimo;
 
         }
 
+//        for (int i = 0; i < 50; i++) {
+//            System.out.println(resultadoHijos[i]);
+//        }
+
         //Los hijos serán los padres para la siguiente generación
-        padres = hijos;
+        padres.clear();
+        padres.addAll(hijos);
+        hijos.clear();
+
         resultado = resultadoHijos;
 
     }
 
-    public int[] evaluar(List<List<Integer>> individuos) throws FileNotFoundException {
+    public int[] evaluar(List<List<Integer>> individuos,int tama) throws FileNotFoundException {
         int[] nRes = new int[50];
-        for (int i = 0; i < individuos.size(); i++) {
+        for (int i = 0; i < 36; i++) {
             int valor = rDiferencia(individuos.get(i), restricciones);
             nRes[i] = valor;
+        }
+        if(tama>=36){
+            nRes[tama]= rDiferencia(individuos.get(tama), restricciones);
         }
 
         //numEvaluaciones+=50;  
@@ -297,7 +382,7 @@ public class Generacional {
         }
     }
 
-    public void resMejorIndividuo() {
+    public void resMejorIndividuo() throws FileNotFoundException {
         int minimo = Integer.MAX_VALUE;
         int actual = 0;
         for (int i = 0; i < 50; i++) {
@@ -308,10 +393,13 @@ public class Generacional {
         }
         List<Integer> mejorIndividuo = padres.get(actual);
 
-        for (int i = 0; i < transmisores.size()-1; i++) {
+        for (int i = 0; i < transmisores.size() - 1; i++) {
             System.out.println("Transmisor " + (i + 1) + ": " + padres.get(actual).get(i));
         }
 
-        System.out.println(resultado[actual]);
+        int a = rDiferencia(mejorIndividuo, restricciones);
+
+        //System.out.println(resultado[actual]);
+        System.out.println(a);
     }
 }
