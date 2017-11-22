@@ -23,6 +23,8 @@ public class Generacional {
 
     static int numParejas = 18;
     static int convergenciaSol=40; // 80% de 50
+    
+    boolean cruce=false;
 
     List<List<Integer>> frecuencias = new ArrayList<>();
     List<Integer> transmisores = new ArrayList<>();
@@ -37,7 +39,8 @@ public class Generacional {
     
     boolean reinicializar=false;
 
-    public Generacional(listaTransmisores _transmisores, rangoFrec _frecuencias, Restricciones _rest) throws FileNotFoundException {
+    public Generacional(listaTransmisores _transmisores, rangoFrec _frecuencias, Restricciones _rest,boolean _cruce) throws FileNotFoundException {
+        cruce= _cruce;
         frecuencias = _frecuencias.rangoFrecuencias;
         transmisores = _transmisores.transmisores;
         restricciones = _rest;
@@ -89,7 +92,6 @@ public class Generacional {
             
             if(comprobarConvergencia1()){
                 if(comprobarConvergencia2()){
-                    System.out.println("Reinicialización por convergencia");
                    reinicializar(resultadoActualL,resultadoActual);
                 }
             }
@@ -222,8 +224,12 @@ public class Generacional {
         while (cont < numParejas) {
             int individuo1 = cont;
             int individuo2 = cont + 1;
-
+            
+            if(cruce==false){
             algCruce2Puntos(individuo1, individuo2);
+            }else{
+                algBX(individuo1, individuo2);
+            }
             cont += 2;
             //System.out.println(cont);
         }
@@ -267,6 +273,33 @@ public class Generacional {
 
     void algBX(int individuo1, int individuo2) {
 
+        //http://www.tomaszgwiazda.com/blendX.htm
+        
+        
+        for(int i=0;i<transmisores.size();i++){
+            int d=Math.abs(hijos.get(individuo1).get(i)-hijos.get(individuo2).get(i));
+            int cmin=Integer.MAX_VALUE;
+            int cmax=Integer.MIN_VALUE;
+            
+            if(hijos.get(individuo1).get(i)<hijos.get(individuo2).get(i)){
+                cmin=hijos.get(individuo1).get(i);
+            }else{
+                cmin=hijos.get(individuo2).get(i);
+            }
+            
+            if(hijos.get(individuo1).get(i)>hijos.get(individuo2).get(i)){
+                cmax=hijos.get(individuo1).get(i);
+            }else{
+                cmax=hijos.get(individuo2).get(i);
+            }
+            
+            double limInf=cmin-d*0.5;
+            double limSup=cmax+d*0.5;
+            
+            
+            
+        }
+        
     }
 
     //Funciona bien
