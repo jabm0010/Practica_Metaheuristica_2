@@ -6,6 +6,7 @@
 package main;
 
 import Algoritmos.P2.Generacional;
+import Algoritmos.P2.Estacionario;
 import Utils.Restricciones;
 import Utils.listaTransmisores;
 import Utils.rangoFrec;
@@ -27,6 +28,10 @@ public class main {
     public static Integer LINEAS;
     public static Random NUMERO;
     public static Integer SEMILLAS[] = {3181827, 1818273, 8182731, 1827318, 8273181};
+    
+    public static boolean cruce=false;//cruce==false ->algoritmo cruce 2 puntos
+                                      //cruce==true  -> algoritmo BLX-a
+    
 
     //Variables para el menu
     static Scanner scanner = new Scanner(System.in);
@@ -65,7 +70,7 @@ public class main {
 //            try {
                 System.out.print("Elige opción:\n1.- Generacional"
                         + "\n2.- Estacionario\n"
-                        + "3.- ----\n"
+                        + "3.- Elegir algoritmo de cruce\n"
                         + "4.- ----\n"
                         + "5.- ----\n"
                         + "6.- ----\n "
@@ -77,34 +82,37 @@ public class main {
                 switch( select ) {
                     case 1:
                         startTime = System.nanoTime();
-                        Generacional generacional = new Generacional(transmisores, frecuencias, rest);
+                        Generacional generacional = new Generacional(transmisores, frecuencias, rest,cruce);
                         endTime = System.nanoTime();
                         
-                        generacional.resultadosHijos();
+                        //generacional.resultadosHijos();
+                        // generacional.resMejorIndividuo();
                         
                         duration = (endTime - startTime) / 1000000000;
                         System.out.println("Tiempo de ejecucion: " + duration + " segundos");
                         break;
                     case 2:
-//                        startTime = System.nanoTime();
-//                        BusquedaLocal busquedaLocal = new BusquedaLocal(transmisores, frecuencias, rest);
-//                        busquedaLocal.algoritmo();
-//                        endTime = System.nanoTime();
-//                        busquedaLocal.resultados();
-//
-//                        duration = (endTime - startTime) / 1000000000;
-//                        System.out.println("Tiempo de ejecucion: " + duration + " segundos");
+                        startTime = System.nanoTime();
+                        Estacionario estacionario = new Estacionario(transmisores, frecuencias, rest,cruce);
+                        endTime = System.nanoTime();
+                        
+                        //generacional.resultadosHijos();
+                        // generacional.resMejorIndividuo();
+                        
+                        duration = (endTime - startTime) / 1000000000;
+                        System.out.println("Tiempo de ejecucion: " + duration + " segundos");
+   
+                        
 
                         break;
                     case 3:
-//                        startTime = System.nanoTime();
-//                        BusquedaTabu busquedaTabu = new BusquedaTabu(transmisores, frecuencias, rest);
-//                        busquedaTabu.algoritmo();
-//                        endTime = System.nanoTime();
-//
-//                        busquedaTabu.resultados();
-//                        duration = (endTime - startTime) / 1000000000;
-//                        System.out.println("Tiempo de ejecucion: " + duration + " segundos");
+                        if(cruce==false){
+                            cruce=true;
+                            System.out.println("Algoritmo cambiado a BLX-a ");
+                        }else{
+                            cruce=false;
+                            System.out.println("Algoritmo cambiado a cruce en 2 puntos");
+                        }
 
                         break;
                     case 4:
