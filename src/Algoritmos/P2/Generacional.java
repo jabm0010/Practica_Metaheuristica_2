@@ -23,6 +23,7 @@ public class Generacional {
 
     static int numParejas = 18;
     static int convergenciaSol=40; // 80% de 50
+    static double alfa=0.5;
     
     boolean cruce=false;
 
@@ -275,6 +276,9 @@ public class Generacional {
 
         //http://www.tomaszgwiazda.com/blendX.htm
         
+        System.out.println("BLX");
+        List<Integer> solucion1 = new ArrayList<>();
+        List<Integer> solucion2 = new ArrayList<>();
         
         for(int i=0;i<transmisores.size();i++){
             int d=Math.abs(hijos.get(individuo1).get(i)-hijos.get(individuo2).get(i));
@@ -292,13 +296,46 @@ public class Generacional {
             }else{
                 cmax=hijos.get(individuo2).get(i);
             }
+   
+            double vmin=cmin-d*alfa;
+            double vmax=cmax+d*alfa;
             
-            double limInf=cmin-d*0.5;
-            double limSup=cmax+d*0.5;
+            int frecAsociada=transmisores.get(i);
+            
+           //Para la solución 1
+            int valorObtenido=(int)Math.floor(Math.random()*(vmax-vmin+1)+vmin);
+            int minimaDiferencia=Integer.MAX_VALUE;
+            int frecuenciaFinal=0;
+            
+            for(int j=0;j<frecuencias.get(frecAsociada).size();j++){
+                if(Math.abs(valorObtenido-frecuencias.get(frecAsociada).get(j))<minimaDiferencia){
+                    frecuenciaFinal=frecuencias.get(frecAsociada).get(j);
+                }
+            }
+            
+            solucion1.add(i, frecuenciaFinal);
+
+            //Para la solución 2
+            int valorObtenido2=(int)Math.floor(Math.random()*(vmax-vmin+1)+vmin);
+            int minimaDiferencia2=Integer.MAX_VALUE;
+            int frecuenciaFinal2=0;
+            
+            for(int j=0;j<frecuencias.get(frecAsociada).size();j++){
+                if(Math.abs(valorObtenido2-frecuencias.get(frecAsociada).get(j))<minimaDiferencia2){
+                    frecuenciaFinal2=frecuencias.get(frecAsociada).get(j);
+                }
+            }
+            
+            solucion2.add(i, frecuenciaFinal2);
+       
+            
             
             
             
         }
+        
+        hijos.set(individuo1,solucion1);
+        hijos.set(individuo2,solucion2);
         
     }
 
