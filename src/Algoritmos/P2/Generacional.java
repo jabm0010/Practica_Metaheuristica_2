@@ -275,15 +275,17 @@ public class Generacional {
     void algBX(int individuo1, int individuo2) {
 
         //http://www.tomaszgwiazda.com/blendX.htm
-        
-        System.out.println("BLX");
+  
+              
         List<Integer> solucion1 = new ArrayList<>();
         List<Integer> solucion2 = new ArrayList<>();
         
         for(int i=0;i<transmisores.size();i++){
             int d=Math.abs(hijos.get(individuo1).get(i)-hijos.get(individuo2).get(i));
+            //System.out.println("Diferencia: "+d);
             int cmin=Integer.MAX_VALUE;
             int cmax=Integer.MIN_VALUE;
+
             
             if(hijos.get(individuo1).get(i)<hijos.get(individuo2).get(i)){
                 cmin=hijos.get(individuo1).get(i);
@@ -297,21 +299,35 @@ public class Generacional {
                 cmax=hijos.get(individuo2).get(i);
             }
    
-            double vmin=cmin-d*alfa;
-            double vmax=cmax+d*alfa;
+            //System.out.println("Maximo: "+cmax);
+            //System.out.println("Minimo: "+cmin);
+            
+            double vmind=cmin-d*alfa;
+            double vmaxd=cmax+d*alfa;
+            int vmin=(int)vmind;
+            int vmax=(int)vmaxd;
+            
+            //System.out.println("Limite inferior:"+vmin);
+            //System.out.println("Limite superior:"+vmax);
             
             int frecAsociada=transmisores.get(i);
+            //System.out.println("Frecuencia asociada:"+frecAsociada);
             
            //Para la solución 1
-            int valorObtenido=(int)Math.floor(Math.random()*(vmax-vmin+1)+vmin);
+           Random n=NUMERO;
+           int valorObtenido=n.nextInt(vmax+1)+vmin;
+           
+            //System.out.println(valorObtenido);
             int minimaDiferencia=Integer.MAX_VALUE;
             int frecuenciaFinal=0;
             
             for(int j=0;j<frecuencias.get(frecAsociada).size();j++){
                 if(Math.abs(valorObtenido-frecuencias.get(frecAsociada).get(j))<minimaDiferencia){
+                     minimaDiferencia=Math.abs(valorObtenido-frecuencias.get(frecAsociada).get(j));
                     frecuenciaFinal=frecuencias.get(frecAsociada).get(j);
                 }
             }
+            //System.out.println(frecuenciaFinal);
             
             solucion1.add(i, frecuenciaFinal);
 
@@ -322,10 +338,12 @@ public class Generacional {
             
             for(int j=0;j<frecuencias.get(frecAsociada).size();j++){
                 if(Math.abs(valorObtenido2-frecuencias.get(frecAsociada).get(j))<minimaDiferencia2){
+                    minimaDiferencia2=Math.abs(valorObtenido2-frecuencias.get(frecAsociada).get(j));
                     frecuenciaFinal2=frecuencias.get(frecAsociada).get(j);
                 }
             }
             
+            //System.out.println(frecuenciaFinal2);
             solucion2.add(i, frecuenciaFinal2);
        
             
