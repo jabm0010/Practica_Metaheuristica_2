@@ -40,7 +40,7 @@ public class listaTransmisores {
             int transmisor = linea.nextInt();
             while( linea.hasNext() && cont < 1 ) {
                 int token = linea.nextInt();
-                transmisores.set(transmisor, token);
+                transmisores.set(transmisor-1, token);
                 cont ++;
             }
             linea.close();
