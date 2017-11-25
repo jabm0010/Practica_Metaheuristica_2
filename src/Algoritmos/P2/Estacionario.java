@@ -528,7 +528,7 @@ public class Estacionario {
             int contador=0;
             
             for(int j=0;j<50;j++){
-               if(padres.get(i)==padres.get(j)){
+               if(padres.get(i).equals(padres.get(j))){
                    contador++;
                }
                if(contador==convergenciaSol){
